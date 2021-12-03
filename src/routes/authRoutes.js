@@ -44,6 +44,18 @@ let router = function(){
 				//inserting new user
 				let authInsertRes = await authTable.insert(user);
 
+				let userTable = await db.collection('usersList');
+					let authTable = await db.collection('auths');
+					let userList = {
+						username : result.username,
+						personalListIds : [],
+						sharedListIds : [],
+						lastAccessedListId : ""
+					};
+					//Creating a list for user
+					await userTable.insert(userList);
+
+
 				if(authInsertRes && authInsertRes.insertedCount){
 					console.log("Account created ");
 					connection.close();
