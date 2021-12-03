@@ -26,7 +26,7 @@ let router = function(){
 					name: req.body.name,
 					username: req.body.username,
 					password: req.body.password,
-					active: false
+					active: true
 				};
 
 				//checking availability of username
@@ -45,9 +45,11 @@ let router = function(){
 				let authInsertRes = await authTable.insert(user);
 
 				if(authInsertRes && authInsertRes.insertedCount){
-					console.log("redirecting to send mail");
+					console.log("Account created ");
 					connection.close();
-					res.redirect(`/api/auth/sendMail?user=${req.body.username}`);
+					res.statusCode=201;
+					res.statusMessage="Account created";
+					res.send("Account created successfully!");
 				};
 		})();
 	});
