@@ -1,0 +1,374 @@
+
+for all invalid request
+
+    response = "Page not found"
+
+    statusCode = 404;
+    
+    statusMessage = "Page Not Found";
+    
+
+
+-------------------------------------------------------authRoutes--------------------------------------------------------
+hostname/auth/signUp
+    method post 
+        request -> name, username, password
+
+        response -> if(username already used)
+                        "Sign Up failed"
+
+                    else if(username is not valid):
+                        "Sign Up failed"
+
+                    else
+                        "Verify Your mail" 
+                        
+
+        statusCode -> if(username already used)
+                        400
+
+                      else if(username is not valid):
+                        400 
+
+                      else
+                        201
+
+        statusMessage -> if(username already used)
+                            "Username Already Present"
+
+                        else if(username is not valid):
+                            "Invalid Mail"
+
+                        else
+                            "Varification mail sent"
+    
+hostname/auth/signIn
+    method post
+        request -> username, password
+
+        response -> if(user is valid)
+                        "redirect to /profile"
+                    else
+                        redirect('/')
+        
+        statusCode -> if(user is valid)
+                        200
+                    
+        statusMessage -> if(user is valid)
+                            "Login Successful"
+                        
+
+hostname/auth/signOut
+    method get
+        request -> user cookie
+
+        response -> "User Logged Out"
+
+        statusCode -> 200
+
+        statusMessage -> "Session deleted"
+
+        
+-------------------------------------------------------profileRoutes-------------------------------------------------------
+for all routes 
+    if(user cookie is not valid)
+        response -> "You are not logged In"
+
+        statusCode -> 401;
+
+        statusMessage -> "Unauthorize access";
+
+hostname/profile
+    method get
+        request -> user cookie
+        response -> user = {
+					name
+					username
+					lists : [],
+					tasks : []
+				}
+
+        statusCode -> 200
+
+	    statusMessage -> if(new user)
+                            "New user"
+                         else
+                            "Old user"
+    
+hostname/profile/listId
+    method get
+        request -> user cookie
+
+        response -> result = {
+                        tasks : []
+                    }
+
+        statusCode -> if(user is not valid)
+                        401
+                      else if(list deleted by owner)
+                        400
+                      else
+                        200
+
+        statusMessage -> if(user is not valid)
+                            "Unauthorize access"
+                         else if(list deleted by owner)
+                            "List is deleted by owner"
+                         else
+                            "response sent"
+
+
+hostname/profile/listId/taskId
+    method get
+        request -> user cookie
+
+        response -> result = {
+                        subtasks : []
+                    }
+
+        statusCode -> if(user is not valid)
+                        401
+                      else
+                        200
+
+        statusMessage -> if(user is not valid)
+                            "Unauthorize access"
+                         else
+                            "response sent"   
+
+---------------------------------------------------------updateRoutes------------------------------------------------------------------
+
+hostname/update
+    for all routes 
+        if(user cookie is not valid)
+            response -> "You are not logged In"
+
+            statusCode -> 401;
+
+            statusMessage -> "Unauthorize access";
+        
+
+hostname/update/addList
+    method post
+        request -> newListName
+        response -> listId
+        statusCode -> 201
+		statusMessage -> "New List Added"
+
+
+hostname/update/addTask
+    method post 
+        request -> listId, newTaskName
+                             
+        response -> if(list does not belong user)
+                        ""(null string)
+                    else
+                        taskId
+
+        statusCode -> if(list does not belong user)
+                        401
+                    else
+                        201
+
+	    statusMessage -> if(list does not belong user)
+                            "Unauthorize access"
+                        else
+                            "New task added"
+       
+                    
+hostname/update/addSubtask
+    method post
+        request -> listId, taskId, newSubTaskName
+
+        response -> if(list does not belong user)
+                        "" (null string)
+                    else if(task does not belong to list)
+                        "" (null string)
+                    else 
+                        newSubtaskName
+
+        statusCode -> if(list does not belong user)
+                            401
+                      else if(task does not belong to list)
+                            400
+                      else 
+                            201
+        
+        statusMessage -> if(list does not belong user)
+                            "Unauthorize access"
+                        else if(task does not belong to list)
+                            "Bad request"
+                        else 
+                            "New Subtask Added"
+
+
+hostname/update/updateList
+    method post
+        request -> listId, newListName
+
+        response -> if(user not valid)
+                        "" (null string)
+                    else 
+                        listId
+
+        statusCode -> if(user not valid)
+                        401
+                      else 
+                        200
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else 
+                            "List updated"
+
+        
+
+
+hostname/update/updateTask
+    method post
+        request -> for searching => listId, taskId 
+				   new data => taskName, taskCompletedStatus, taskImportantStatus, taskNotes, taskDueDate
+        
+        response -> if(user not valid)
+                        ""(null string)
+                    else if(task does not belong to list)
+                        ""(null string)
+                    else
+                        taskId
+
+        
+        statusCode -> if(user not valid)
+                        401
+                    else if(task does not belong to list)
+                        400
+                    else
+                        200
+
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else if(task does not belong to list)
+                            "Bad request"
+                        else
+                            "Task updated"
+
+
+hostname/update/updateSubtask
+    method post
+        request ->  for searching => listId, taskid, subtaskName
+			        new date => newSubtaskName, subtaskCompletedStatus
+        
+        response -> if(user not valid)
+                        ""(null string)
+                    else if(task does not belong to list)
+                        ""(null string)
+                    else
+                        subtaskName
+
+        
+        statusCode -> if(user not valid)
+                        401
+                    else if(task does not belong to list)
+                        400
+                    else
+                        200
+
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else if(task does not belong to list)
+                            "Bad request"
+                        else
+                            "Task updated"
+
+--------------------------------------------------------------deleteRoutes----------------------------------------------------------------------
+
+
+hostname/delete
+    for all routes 
+        if(user cookie is not valid)
+            response -> "You are not logged In"
+
+            statusCode -> 401;
+
+            statusMessage -> "Unauthorize access";
+
+hostname/delete/deleteList
+     method post
+        request -> listId
+        
+        response -> if(user not valid)
+                        "Unauthorize access"
+                    else
+                        "List deleted"
+
+        
+        statusCode -> if(user not valid)
+                        401
+                      else
+                        200
+
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else
+                            "List deleted"
+
+
+hostname/delete/deleteTask
+     method post
+        request -> listId, taskId
+        
+        response -> if(user not valid)
+                        "Unauthorize access"
+                    else if(task is not valid)
+                        "Task does not belong to List"
+                    else
+                        "Task deleted"
+
+        
+        statusCode -> if(user not valid)
+                        401
+                    else if(task is not valid)
+                        400
+                      else
+                        200
+
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else if(task is not valid)
+                            "Bad request"
+                        else
+                            "Task deleted"
+
+
+hostname/delete/deleteSubtask
+     method post
+        request -> listId, taskId, subtaskName
+        
+        response -> if(user not valid)
+                        "Unauthorize access"
+                    else if(task is not valid)
+                        "Task does not belong to List"
+                    else
+                        "subtask deleted"
+
+        
+        statusCode -> if(user not valid)
+                        401
+                    else if(task is not valid)
+                        400
+                      else
+                        200
+
+
+        statusMessage -> if(user not valid)
+                            "Unauthorize access"
+                        else if(task is not valid)
+                            "Bad request"
+                        else
+                            "subtask deleted"
+
+
+
