@@ -6,7 +6,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 80;
 
 const app = express();
 app.set('views', path.join(__dirname + '/src/views'));
