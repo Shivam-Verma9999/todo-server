@@ -45,7 +45,6 @@ let router = function(){
 				let authInsertRes = await authTable.insert(user);
 
 				let userTable = await db.collection('usersList');
-					let authTable = await db.collection('auths');
 					let userList = {
 						username : result.username,
 						personalListIds : [],
