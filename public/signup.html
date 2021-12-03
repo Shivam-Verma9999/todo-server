@@ -20,6 +20,7 @@
                 <h1>Welcome,</h1>
                 <p>Lets plan your day</p>
             </div>
+            <div class="signUpError"></div>
             <div class="form-container">
                 <form onsubmit="formValidator(event)">
                     <label for="email">Email</label>
@@ -48,8 +49,24 @@
     </div>
     <script>
 
+        let errorActiveClassName = "signUpErrorActive";
+        let errorClassName = "signUpError";
+
+        let errorDiv = document.querySelector(`.${errorClassName}`);
+
+        let showErrorMessage = (message) => {
+            errorDiv.classList.add(errorActiveClassName);
+            errorDiv.innerHTML = message;
+        }
+
+        let hideErrorDiv = () => {
+            errorDiv.classList.remove(errorActiveClassName);
+            errorDiv.innerHTML = "";
+        }
+
         let formValidator = (event) => {
             event.preventDefault();
+            hideErrorDiv();
             let form = event.target;
             let name = form.name.value && form.name.value.trim();
             let email = form.email.value && form.email.value.trim();
@@ -58,17 +75,17 @@
             console.log(name, email, password, confirmPassword);
 
             if (!name) {
-                alert('name not entered');
+                showErrorMessage('name not entered');
             } else if (!email) {
-                alert('please enter your valid email');
+                showErrorMessage('please enter your valid email');
             } else if (!password) {
-                alert('please enter a secure password')
+                showErrorMessage('please enter a secure password')
             } else if (!confirmPassword) {
-                alert('confirm above password');
+                showErrorMessage('confirm above password');
             } else if (password !== confirmPassword) {
-                alert('password do not match');
+                showErrorMessage('password do not match');
             } else if (password.length < 6) {
-                alert('Please choose a secure password of minimum 6 Characters');
+                showErrorMessage('Please choose a secure password of minimum 6 Characters');
             } else {
                 let body = {
                     username: email,
@@ -81,16 +98,16 @@
                     })
                     .join('&');
                 console.log(postBody);
-                fetch('http://40.121.182.221:3000/api/auth/signUp', {
+                fetch('http://localhost:3000/api/auth/signUp', {
                     method: 'post',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: postBody
                 }).then(res => {
                     console.log(res);
                     if (res.status === 400) {
-                        alert(res.statusText);
+                        showErrorMessage(res.statusText);
                     } else if (res.status === 201) {
-                        alert('We have sent a verification link to your email.');
+                        showErrorMessage('We have sent a verification link to your email.');
                     }
 
                 }).catch(er => {

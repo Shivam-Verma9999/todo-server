@@ -71,3 +71,19 @@ input[type="submit"] {
 .message {
   font-size: 12px;
 }
+
+.signUpError {
+  text-align: center;
+  background-color: rgb(247, 205, 205);
+  color: #f44444;
+  transition-duration: 0.2s;
+  max-height: 0px;
+  border-radius: 5px;
+  padding: 5px 0px;
+  max-width: 300px;
+}
+
+.signUpErrorActive {
+  padding: 5px 10px;
+  max-height: 100px;
+}
