@@ -1,3 +1,4 @@
+const DBUrl = require('../config/DBConfig');
 let express  = require('express');
 let deleteRouter = express.Router();
 let MongoClient = require('mongodb').MongoClient;
@@ -5,7 +6,6 @@ let ObjectId = require('mongodb').ObjectID;
 
 
 //database variables
-let url = 'mongodb://localhost:27017';
 let taskTableName = 'task';
 let listTableName = 'list';
 let userTableName = 'usersList';
@@ -30,7 +30,7 @@ let router = function(){
             (async function(){
 
                 // establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
                 let db = connection.db(dbName);
                 
                 //getting userList table
@@ -103,7 +103,7 @@ let router = function(){
             (async function(){
 
                 // establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
                 let db = connection.db(dbName);
                 
                 //getting userList table
@@ -180,7 +180,7 @@ let router = function(){
             (async function(){
 
                 // establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
                 let db = connection.db(dbName);
                 
                 //getting userList table

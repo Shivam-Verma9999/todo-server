@@ -1,3 +1,4 @@
+const DBUrl = require('../DBConfig');
 var passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy,
 	MongoClient = require('mongodb').MongoClient;
@@ -9,8 +10,7 @@ module.exports = function(){
 		passwordField : 'password'
 	},
 	function(username, password, done){
-		var url = 'mongodb://localhost:27017';
-		MongoClient.connect(url, function(err, client){
+		MongoClient.connect(DBUrl, function(err, client){
 			var db = client.db('ToDo');
 			var authTable = db.collection('auths');
 			authTable.findOne({
