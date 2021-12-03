@@ -5,7 +5,6 @@ let ObjectId = require('mongodb').ObjectID;
 
 
 //database variables
-let url = 'mongodb://localhost:27017';
 let taskTableName = 'task';
 let listTableName = 'list';
 let userTableName = 'usersList';

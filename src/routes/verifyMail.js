@@ -1,3 +1,4 @@
+const DBUrl = require('../config/DBConfig');
 let express = require('express');
 let verifyRouter = express.Router();
 let MongoClient = require('mongodb').MongoClient;
@@ -6,9 +7,8 @@ const func = function(){
 	verifyRouter.route('/')
 		.get( (req, res) => {
 			console.log("----------"+req.param('id'));
-			const url = 'mongodb://localhost:27017';
 			(async function(){
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = await connection.db('ToDo');
 				let inactiveTable = await db.collection('inactiveUsers');
 				let result = await inactiveTable.findOne({hash : Number.parseInt(req.param('id'))});

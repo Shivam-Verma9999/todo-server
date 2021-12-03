@@ -1,3 +1,4 @@
+const DBUrl = require('../config/DBConfig');
 let express = require("express");
 let authRouter = express.Router();
 let MongoClient = require('mongodb').MongoClient;
@@ -9,11 +10,10 @@ let router = function(){
 	authRouter.route('/signUp')
 		.post((req, res) => {
 			console.log(req.body);
-			const url = 'mongodb://localhost:27017';
 			
 			(async function(){
 				//connection to mongoserver
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 
 				//getting database
 				let db = connection.db('ToDo');
@@ -96,13 +96,12 @@ let router = function(){
 				}
 				console.log(mailOptions);
 				// adding user in inactive user table
-				const url = 'mongodb://localhost:27017';
 				console.log("url generated");
 				let user = {
 					username : req.param('user'),
 					hash : rand
 				}
-				MongoClient.connect(url, function(err, client){
+				MongoClient.connect(DBUrl, function(err, client){
 					let db = client.db('ToDo');
 					let inactiveTable = db.collection('inactiveUsers');
 					inactiveTable.insertOne(user, function(err, results){
@@ -123,13 +122,12 @@ let router = function(){
 			    //     }else{
 
 			    //     	// adding user in inactive user table
-			    //     	const url = 'mongodb://localhost:27017';
 			    //     	console.log("url generated");
 			    //     	let user = {
 		        // 			username : req.param('user'),
 		        // 			hash : rand
 		        // 		}
-				// 		MongoClient.connect(url, function(err, client){
+				// 		MongoClient.connect(DBUrl, function(err, client){
 				// 			let db = client.db('ToDo');
 				// 			let inactiveTable = db.collection('inactiveUsers');
 				// 			inactiveTable.insertOne(user, function(err, results){

@@ -1,3 +1,4 @@
+const DBUrl = require('../config/DBConfig');
 let express = require("express");
 let updateRouter = express.Router();
 let MongoClient = require('mongodb').MongoClient;
@@ -5,7 +6,6 @@ let ObjectId = require('mongodb').ObjectID;
 
 
 //database variables
-let url = 'mongodb://localhost:27017';
 let taskTableName = 'task';
 let listTableName = 'list';
 let userTableName = 'usersList';
@@ -30,7 +30,7 @@ let router = function() {
 			(async function(){
 
 				// establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				// getting user table
@@ -70,7 +70,7 @@ let router = function() {
 			(async function(){
 
 				// establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				//getting todo table
@@ -113,7 +113,7 @@ let router = function() {
 
 				//pending -> check task in listId and authenticate user
 				// establising connection to database
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				//getting todo table
@@ -144,7 +144,7 @@ let router = function() {
 				//pending - user authentication
 				// establising connection to database
 			
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				let todoTable = db.collection(listTableName);
@@ -171,7 +171,7 @@ let router = function() {
 				
 				// establising connection to database
 			
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				let todoTable = db.collection(listTableName);
@@ -206,7 +206,7 @@ let router = function() {
 
 				// establising connection to database
 			
-				let connection = await MongoClient.connect(url);
+				let connection = await MongoClient.connect(DBUrl);
 				let db = connection.db(dbName);
 
 				let taskTable = db.collection(taskTableName);
