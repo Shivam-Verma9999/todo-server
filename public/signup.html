@@ -20,7 +20,7 @@
                 <h1>Welcome,</h1>
                 <p>Lets plan your day</p>
             </div>
-            <div class="signUpError"></div>
+            <div class="msgDiv"></div>
             <div class="form-container">
                 <form onsubmit="formValidator(event)">
                     <label for="email">Email</label>
@@ -49,19 +49,30 @@
     </div>
     <script>
 
-        let errorActiveClassName = "signUpErrorActive";
-        let errorClassName = "signUpError";
+        let activeClassName = "signUpActive";
+        let signUpSuccessClassName = "signUpSuccess";
+        let signUpErrorClassName = "signUpError";
+        let msgDivClassName = "msgDiv";
 
-        let errorDiv = document.querySelector(`.${errorClassName}`);
+        let msgDiv = document.querySelector(`.${msgDivClassName}`);
 
         let showErrorMessage = (message) => {
-            errorDiv.classList.add(errorActiveClassName);
-            errorDiv.innerHTML = message;
+            msgDiv.classList.add(activeClassName);
+            msgDiv.classList.add(signUpErrorClassName);
+            msgDiv.innerHTML = message;
+        }
+
+        let successRegistration =(message) =>{
+            msgDiv.classList.add(signUpSuccessClassName);
+            msgDiv.classList.add(activeClassName)
+            msgDiv.innerHTML = message;
         }
 
         let hideErrorDiv = () => {
-            errorDiv.classList.remove(errorActiveClassName);
-            errorDiv.innerHTML = "";
+            msgDiv.classList.remove(activeClassName);
+            if(msgDiv.classList.contains(signUpErrorClassName)) msgDiv.classList.remove(signUpErrorClassName);
+            if(msgDiv.classList.contains(signUpSuccessClassName)) msgDiv.classList.remove(signUpSuccessClassName);
+            msgDiv.innerHTML = "";
         }
 
         let formValidator = (event) => {
@@ -98,16 +109,16 @@
                     })
                     .join('&');
                 console.log(postBody);
-                fetch('http://localhost:3000/api/auth/signUp', {
+                fetch('./api/auth/signUp', {
                     method: 'post',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: postBody
                 }).then(res => {
                     console.log(res);
                     if (res.status === 400) {
-                        showErrorMessage(res.statusText);
+                        showErrorMessage(res.statusText);   
                     } else if (res.status === 201) {
-                        showErrorMessage('We have sent a verification link to your email.');
+                        successRegistration('Account created. You can Login now.');
                     }
 
                 }).catch(er => {

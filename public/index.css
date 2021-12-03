@@ -83,7 +83,17 @@ input[type="submit"] {
   max-width: 300px;
 }
 
-.signUpErrorActive {
+.signUpSuccess{
+  text-align: center;
+  background-color: rgb(205, 247, 216);
+  color: #22c545;
+  transition-duration: 0.2s;
+  max-height: 0px;
+  border-radius: 5px;
+  padding: 5px 0px;
+  max-width: 300px;
+}
+.signUpActive {
   padding: 5px 10px;
   max-height: 100px;
 }
