@@ -46,7 +46,7 @@ let router = function(){
 
 				let userTable = await db.collection('usersList');
 					let userList = {
-						username : result.username,
+						username : user.name,
 						personalListIds : [],
 						sharedListIds : [],
 						lastAccessedListId : ""
