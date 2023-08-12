@@ -13,7 +13,7 @@ app.set('views', path.join(__dirname + '/src/views'));
 app.set('view engine', 'ejs');
 
 let corsOptions = {
-	origin : ['http://localhost:3000', 'http://localhost:3001', 'http://40.121.182.221:9000'],
+	origin : ['http://localhost:3000', 'http://localhost:3001', 'http://40.121.182.221:9000', 'https://todo-app-frontend-z9h0.onrender.com'],
 	credentials : true
 };
 app.use(cors(corsOptions));
