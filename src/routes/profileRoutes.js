@@ -15,6 +15,7 @@ let dbName = 'ToDo';
 
 let router = function(){
 	profileRouter.use((req, res, next) => {
+		console.log(req.user);
 		if(!req.user){
 			res.statusCode = 401;
 			res.statusMessage = "Unauthorize message";
