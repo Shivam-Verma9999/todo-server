@@ -36,7 +36,7 @@ let router = function(){
 				if(userSearch){
 					console.log("Username Already Present");
 					res.statusCode = 400;
-					res.statusMessage = "Username Already Present";
+					res.statusText = "Username Already Present";
 					res.send('Sign Up failed');
 					return;
 				}
@@ -59,7 +59,7 @@ let router = function(){
 					console.log("Account created ");
 					connection.close();
 					res.statusCode=201;
-					res.statusMessage="Account created";
+					res.statusText="Account created";
 					res.send("Account created successfully!");
 				};
 		})();
@@ -70,7 +70,7 @@ let router = function(){
 			failureRedirect: '/' 
 		}), function(req, res) {
 			res.statusCode = 200;
-			res.statusMessage = "Login Successful";
+			res.statusText = "Login Successful";
 			res.send('redirect to /profile');
 		});
 	
@@ -78,7 +78,7 @@ let router = function(){
 		.get( (req, res) =>{
 			req.session.destroy();
 			res.statusCode = 200;
-			res.statusMessage = "Session deleted";
+			res.statusText = "Session deleted";
 			res.send("User Logged Out");
 		});
 	//sending mail for verification of username
@@ -119,7 +119,7 @@ let router = function(){
 						client.close()
 
 						res.statusCode = 201;
-						res.statusMessage = "Varification mail sent";
+						res.statusText = "Varification mail sent";
 						res.send('Sign Up successful Varify your mail');
 					});
 				});
@@ -128,7 +128,7 @@ let router = function(){
 			    //     if(error){
 				// 		console.log(error);
 				// 		res.statusCode = 400;
-				// 		res.statusMessage = "Invalid Mail";
+				// 		res.statusText = "Invalid Mail";
 			    //         res.send('Sign Up failed');
 			    //     }else{
 
@@ -145,7 +145,7 @@ let router = function(){
 				// 				client.close()
 
 				// 				res.statusCode = 201;
-				// 				res.statusMessage = "Varification mail sent";
+				// 				res.statusText = "Varification mail sent";
 				// 				res.send('Sign Up successful Varify your mail');
 				// 			});
 				// 		});
@@ -158,7 +158,7 @@ let router = function(){
 	authRouter.route('/*')
 		.all( (req, res) => {
 			res.statusCode = 404;
-			res.statusMessage = "Page Not Found";
+			res.statusText = "Page Not Found";
 			res.send("Page not found");
 		});
 
