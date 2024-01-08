@@ -65,10 +65,10 @@ let router = function () {
 
   authRouter.route("/signIn").post(
     passport.authenticate("local", {
-      failureRedirect: "/",
       cookie: {
         secure: true, // Requires HTTPS
-        sameSite: "none", // Sets SameSite to None
+        sameSite: "none", // Sets SameSite to None,
+        maxAge: 24 * 60 * 60 * 1000,
       },
     }),
     function (req, res) {
