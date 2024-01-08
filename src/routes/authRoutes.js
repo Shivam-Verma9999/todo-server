@@ -1,168 +1,172 @@
-const DBUrl = require('../config/DBConfig');
+const DBUrl = require("../config/DBConfig");
 let express = require("express");
 let authRouter = express.Router();
-let MongoClient = require('mongodb').MongoClient;
-let passport = require('passport');
+let MongoClient = require("mongodb").MongoClient;
+let passport = require("passport");
 const nodemailer = require("nodemailer");
-var smtpTransport = require('nodemailer-smtp-transport');
+var smtpTransport = require("nodemailer-smtp-transport");
 
-let router = function(){
-	authRouter.route('/signUp')
-		.post((req, res) => {
-			console.log(req.body);
-			
-			(async function(){
-				//connection to mongoserver
-				let connection = await MongoClient.connect(DBUrl);
+let router = function () {
+  authRouter.route("/signUp").post((req, res) => {
+    console.log(req.body);
 
-				//getting database
-				let db = connection.db('ToDo');
+    (async function () {
+      //connection to mongoserver
+      let connection = await MongoClient.connect(DBUrl);
 
-				//getting auth collection 
-				let authTable = db.collection('auths');
+      //getting database
+      let db = connection.db("ToDo");
 
-				//creating user
-				let user = {
-					name: req.body.name,
-					username: req.body.username,
-					password: req.body.password,
-					active: true
-				};
+      //getting auth collection
+      let authTable = db.collection("auths");
 
-				//checking availability of username
-				let userSearch = await authTable.findOne({username: req.body.username });
-				console.log(userSearch);
-				
-				if(userSearch){
-					console.log("Username Already Present");
-					res.statusCode = 400;
-					res.statusText = "Username Already Present";
-					res.send('Sign Up failed');
-					return;
-				}
+      //creating user
+      let user = {
+        name: req.body.name,
+        username: req.body.username,
+        password: req.body.password,
+        active: true,
+      };
 
-				//inserting new user
-				let authInsertRes = await authTable.insert(user);
+      //checking availability of username
+      let userSearch = await authTable.findOne({ username: req.body.username });
+      console.log(userSearch);
 
-				let userTable = await db.collection('usersList');
-					let userList = {
-						username : user.username,
-						personalListIds : [],
-						sharedListIds : [],
-						lastAccessedListId : ""
-					};
-					//Creating a list for user
-					await userTable.insert(userList);
+      if (userSearch) {
+        console.log("Username Already Present");
+        res.statusCode = 400;
+        res.statusText = "Username Already Present";
+        res.send("Sign Up failed");
+        return;
+      }
 
+      //inserting new user
+      let authInsertRes = await authTable.insert(user);
 
-				if(authInsertRes && authInsertRes.insertedCount){
-					console.log("Account created ");
-					connection.close();
-					res.statusCode=201;
-					res.statusText="Account created";
-					res.send("Account created successfully!");
-				};
-		})();
-	});
+      let userTable = await db.collection("usersList");
+      let userList = {
+        username: user.username,
+        personalListIds: [],
+        sharedListIds: [],
+        lastAccessedListId: "",
+      };
+      //Creating a list for user
+      await userTable.insert(userList);
 
-	authRouter.route('/signIn')
-		.post(passport.authenticate('local', {
-			failureRedirect: '/' 
-		}), function(req, res) {
-			res.statusCode = 200;
-			res.statusText = "Login Successful";
-			res.send('redirect to /profile');
-		});
-	
-	authRouter.route('/signOut')
-		.get( (req, res) =>{
-			req.session.destroy();
-			res.statusCode = 200;
-			res.statusText = "Session deleted";
-			res.send("User Logged Out");
-		});
-	//sending mail for verification of username
-	authRouter.route('/sendMail')
-		//pending -> authenticate this route
-		.get((req, res) =>{
-			(async function() {
+      if (authInsertRes && authInsertRes.insertedCount) {
+        console.log("Account created ");
+        connection.close();
+        res.statusCode = 201;
+        res.statusText = "Account created";
+        res.send("Account created successfully!");
+      }
+    })();
+  });
 
-				var smtpTransport = await nodemailer.createTransport({
-			        service: "Gmail",
-			        auth: {
-			            user: "kaushalesh.diary@gmail.com",
-			            pass: "diary@44"
-			        }
-			    });
+  authRouter.route("/signIn").post(
+    passport.authenticate("local", {
+      failureRedirect: "/",
+      cookie: {
+        sameSite: "none",
+      },
+    }),
+    function (req, res) {
+      res.statusCode = 200;
+      res.statusText = "Login Successful";
+      res.send("redirect to /profile");
+    }
+  );
 
-			    console.log("transporter created");
-				let rand=Math.floor((Math.random() * 10000) + 97);
-				let host=req.get('host');
-    			let link="http://"+req.get('host')+"/verifyMail?id="+rand;
+  authRouter.route("/signOut").get((req, res) => {
+    req.session.destroy();
+    res.statusCode = 200;
+    res.statusText = "Session deleted";
+    res.send("User Logged Out");
+  });
+  //sending mail for verification of username
+  authRouter
+    .route("/sendMail")
+    //pending -> authenticate this route
+    .get((req, res) => {
+      (async function () {
+        var smtpTransport = await nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            user: "kaushalesh.diary@gmail.com",
+            pass: "diary@44",
+          },
+        });
 
-			    var mailOptions = {
-			        to: req.param('user'), 
-			        subject: "Please confirm your Email account",
-			        html : "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" 
-				}
-				console.log(mailOptions);
-				// adding user in inactive user table
-				console.log("url generated");
-				let user = {
-					username : req.param('user'),
-					hash : rand
-				}
-				MongoClient.connect(DBUrl, function(err, client){
-					let db = client.db('ToDo');
-					let inactiveTable = db.collection('inactiveUsers');
-					inactiveTable.insertOne(user, function(err, results){
-						client.close()
+        console.log("transporter created");
+        let rand = Math.floor(Math.random() * 10000 + 97);
+        let host = req.get("host");
+        let link = "http://" + req.get("host") + "/verifyMail?id=" + rand;
 
-						res.statusCode = 201;
-						res.statusText = "Varification mail sent";
-						res.send('Sign Up successful Varify your mail');
-					});
-				});
+        var mailOptions = {
+          to: req.param("user"),
+          subject: "Please confirm your Email account",
+          html:
+            "Hello,<br> Please Click on the link to verify your email.<br><a href=" +
+            link +
+            ">Click here to verify</a>",
+        };
+        console.log(mailOptions);
+        // adding user in inactive user table
+        console.log("url generated");
+        let user = {
+          username: req.param("user"),
+          hash: rand,
+        };
+        MongoClient.connect(DBUrl, function (err, client) {
+          let db = client.db("ToDo");
+          let inactiveTable = db.collection("inactiveUsers");
+          inactiveTable.insertOne(user, function (err, results) {
+            client.close();
 
-			    // smtpTransport.sendMail(mailOptions, function(error, response){
-			    //     if(error){
-				// 		console.log(error);
-				// 		res.statusCode = 400;
-				// 		res.statusText = "Invalid Mail";
-			    //         res.send('Sign Up failed');
-			    //     }else{
+            res.statusCode = 201;
+            res.statusText = "Varification mail sent";
+            res.send("Sign Up successful Varify your mail");
+          });
+        });
 
-			    //     	// adding user in inactive user table
-			    //     	console.log("url generated");
-			    //     	let user = {
-		        // 			username : req.param('user'),
-		        // 			hash : rand
-		        // 		}
-				// 		MongoClient.connect(DBUrl, function(err, client){
-				// 			let db = client.db('ToDo');
-				// 			let inactiveTable = db.collection('inactiveUsers');
-				// 			inactiveTable.insertOne(user, function(err, results){
-				// 				client.close()
+        // smtpTransport.sendMail(mailOptions, function(error, response){
+        //     if(error){
+        // 		console.log(error);
+        // 		res.statusCode = 400;
+        // 		res.statusText = "Invalid Mail";
+        //         res.send('Sign Up failed');
+        //     }else{
 
-				// 				res.statusCode = 201;
-				// 				res.statusText = "Varification mail sent";
-				// 				res.send('Sign Up successful Varify your mail');
-				// 			});
-				// 		});
-			    //     }
-				// });
-			})();
-		});
+        //     	// adding user in inactive user table
+        //     	console.log("url generated");
+        //     	let user = {
+        // 			username : req.param('user'),
+        // 			hash : rand
+        // 		}
+        // 		MongoClient.connect(DBUrl, function(err, client){
+        // 			let db = client.db('ToDo');
+        // 			let inactiveTable = db.collection('inactiveUsers');
+        // 			inactiveTable.insertOne(user, function(err, results){
+        // 				client.close()
 
-	// Page not found
-	authRouter.route('/*')
-		.all( (req, res) => {
-			res.statusCode = 404;
-			res.statusText = "Page Not Found";
-			res.send("Page not found");
-		});
+        // 				res.statusCode = 201;
+        // 				res.statusText = "Varification mail sent";
+        // 				res.send('Sign Up successful Varify your mail');
+        // 			});
+        // 		});
+        //     }
+        // });
+      })();
+    });
 
-	return authRouter;
-}
+  // Page not found
+  authRouter.route("/*").all((req, res) => {
+    res.statusCode = 404;
+    res.statusText = "Page Not Found";
+    res.send("Page not found");
+  });
+
+  return authRouter;
+};
 
 module.exports = router;
