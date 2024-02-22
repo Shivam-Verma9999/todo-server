@@ -67,7 +67,7 @@ let router = function () {
     passport.authenticate("local", {
       cookie: {
         secure: true, // Requires HTTPS
-        sameSite: "none", // Sets SameSite to None,
+        sameSite: "None", // Sets SameSite to None,
         maxAge: 24 * 60 * 60 * 1000,
       },
     }),

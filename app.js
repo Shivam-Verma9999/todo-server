@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 let corsOptions = {
   origin: [
     "http://localhost:3000",
-    "http://localhost:3001",
+    "http://localhost:5000",
     "http://40.121.182.221:9000",
     "https://todo-app-frontend-z9h0.onrender.com",
   ],
@@ -31,6 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({ secret: "TODO" }));
+app.use(express.static(__dirname + "public"));
 require("./src/config/passport")(app);
 
 //Routes of application
