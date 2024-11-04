@@ -42,6 +42,8 @@ const updateRouter = require("./src/routes/updateRoutes")();
 const deleteRouter = require("./src/routes/deleteRoutes")();
 const shareRouter = require("./src/routes/shareRoutes")();
 
+//test
+
 app.use("/api/auth", authRouter);
 app.use("/api/verifyMail", varifyRouter);
 app.use("/api/profile", profileRouter);
